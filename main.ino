@@ -8,13 +8,14 @@ const int motorLENPin = 5;
 const int motorLIN2Pin = 7;
 const int motorLIN1Pin = 6;
 
-const int driveSpeed = 100;
-const int turnSpeed = 100;
+const int driveSpeed = 255;
+const int turnSpeed = 255;
 
 Motor rightMotor(motorRIN1Pin, motorRIN2Pin, motorRENPin);
 Motor leftMotor(motorLIN1Pin, motorLIN2Pin, motorLENPin);
 
 int LineSensorFront, LineSensorBack;
+int attackDriveSpeed;
 
 enum State {
   IDLE,
@@ -49,17 +50,17 @@ void avoid_edge() {
   LineSensorBack = digitalRead(3);
   
   if (LineSensorFront < 1) {
-    rightMotor.backward(driveSpeed);
+    rightMotor.backward(driveSpeed - 25);
     leftMotor.backward(driveSpeed);
     delay(1000);
-    rightMotor.forward(driveSpeed);
+    rightMotor.forward(driveSpeed - 25);
     leftMotor.backward(driveSpeed);
     delay(100);
   } else if (LineSensorFront < 1) {
-    rightMotor.forward(driveSpeed);
+    rightMotor.forward(driveSpeed - 25);
     leftMotor.forward(driveSpeed);
     delay(1000);
-    rightMotor.forward(driveSpeed);
+    rightMotor.forward(driveSpeed - 25);
     leftMotor.backward(driveSpeed);
     delay(100);
   } else {
@@ -68,7 +69,7 @@ void avoid_edge() {
 }
 
 void DriveAround() {
-  rightMotor.forward(driveSpeed);
+  rightMotor.forward(driveSpeed - 25);
   leftMotor.forward(driveSpeed);
 }
 
