@@ -28,43 +28,39 @@ enum State {
 
 State currentState = IDLE;
 
+void avoid_edge_front() {
+  rightMotor.backward(driveSpeed - 25);
+  leftMotor.backward(driveSpeed);
+  delay(1000);
+  rightMotor.forward(driveSpeed - 25);
+  leftMotor.backward(driveSpeed);
+  delay(100);
+}
+
+void avoid_edge_back() {
+  rightMotor.forward(driveSpeed - 25);
+  leftMotor.forward(driveSpeed);
+  delay(1000);
+  rightMotor.forward(driveSpeed - 25);
+  leftMotor.backward(driveSpeed);
+  delay(100);
+}
 
 void setup() {
   Serial.begin(9600);
   delay(5000);
+
+  attachInterrupt(digitalPinToInterrupt(4, avoid_edge_front, FALLING));
+  attachInterrupt(digitalPinToInterrupt(3, avoid_edge_back, FALLING));
 }
 
 void loop() {
-  avoid_edge();
-  if (digitalRead(2) < 1) {
-    currentState = CHARGE;
-    attack();
-  }
-
-
-  
-}
-
-void avoid_edge() {
-  LineSensorFront = digitalRead(4);
-  LineSensorBack = digitalRead(3);
-  
-  if (LineSensorFront < 1) {
-    rightMotor.backward(driveSpeed - 25);
-    leftMotor.backward(driveSpeed);
-    delay(1000);
-    rightMotor.forward(driveSpeed - 25);
-    leftMotor.backward(driveSpeed);
-    delay(100);
-  } else if (LineSensorFront < 1) {
-    rightMotor.forward(driveSpeed - 25);
-    leftMotor.forward(driveSpeed);
-    delay(1000);
-    rightMotor.forward(driveSpeed - 25);
-    leftMotor.backward(driveSpeed);
-    delay(100);
-  } else {
-    DriveAround();
+  switch (currentState) {
+    case IDLE:
+      delay(5000);
+      currentState = SEARCH;
+    
+    case SEARCH
   }
 }
 
