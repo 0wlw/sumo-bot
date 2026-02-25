@@ -16,6 +16,7 @@ Motor leftMotor(motorLIN1Pin, motorLIN2Pin, motorLENPin);
 
 int LineSensorFront, LineSensorBack;
 int attackDriveSpeed;
+int chargeStartTime;
 
 enum State {
   IDLE,
@@ -29,29 +30,29 @@ enum State {
 State currentState = IDLE;
 
 void avoid_edge_front() {
-  rightMotor.backward(driveSpeed - 25);
+  rightMotor.backward(driveSpeed);
   leftMotor.backward(driveSpeed);
   delay(1000);
-  rightMotor.forward(driveSpeed - 25);
+  rightMotor.forward(driveSpeed);
   leftMotor.backward(driveSpeed);
-  delay(100);
+  delay(500);
 }
 
 void avoid_edge_back() {
-  rightMotor.forward(driveSpeed - 25);
+  rightMotor.forward(driveSpeed);
   leftMotor.forward(driveSpeed);
   delay(1000);
-  rightMotor.forward(driveSpeed - 25);
+  rightMotor.forward(driveSpeed);
   leftMotor.backward(driveSpeed);
-  delay(100);
+  delay(500);
 }
 
 void setup() {
   Serial.begin(9600);
   delay(5000);
 
-  attachInterrupt(digitalPinToInterrupt(4, avoid_edge_front, FALLING));
-  attachInterrupt(digitalPinToInterrupt(3, avoid_edge_back, FALLING));
+  attachInterrupt(digitalPinToInterrupt(2), avoid_edge_front, LOW);
+  attachInterrupt(digitalPinToInterrupt(3), avoid_edge_back, LOW);
 }
 
 void loop() {
@@ -60,12 +61,27 @@ void loop() {
       delay(5000);
       currentState = SEARCH;
     
-    case SEARCH
+    case SEARCH:
+      // ultrasonic range finder reading 1
+      //rotate servo to left 
+      // ultrasonic range finder reading 2
+      //rotate servo to right
+      // ultrasonic range finder reading 3
+      // direction = greatest // ultrasonic range finder reading
+      // turn robot in direction (probably will need calibration)
+      currentState = CHARGE;
+      chargeStartTime = millis();
+
+    case CHARGE:
+      attack();
+      if (millis() - chargeStartTime > 2000) {
+        currentState = SEARCH;
+      }
   }
 }
 
 void DriveAround() {
-  rightMotor.forward(driveSpeed - 25);
+  rightMotor.forward(driveSpeed);
   leftMotor.forward(driveSpeed);
 }
 
@@ -79,5 +95,5 @@ void attack() {
   attackDriveSpeed = 255;
   rightMotor.forward(attackDriveSpeed);
   leftMotor.forward(attackDriveSpeed);
-  delay(1000);
+  //delay(1000);
 }
