@@ -66,7 +66,7 @@ void loop() {
 
     case BACKWARD:              //currently only used when avoiding edge
       moveBackward();
-      delay(2000);
+      delay(500);
       currentState = TURN;
       break;
 		
@@ -84,8 +84,10 @@ void loop() {
 
 
     case SEARCH:
+      Serial.println("Starting Search");
 			locationData[100] = ultrasonicSearch();
       orient(locationData);
+      Serial.println("Search end");
       currentState = FORWARD;
       break;
 
@@ -135,6 +137,7 @@ float ultrasonicSearch() {
       leftMotor.backward(driveSpeed);
       delay(36);
     }
+    Serial.println(array[100]);
 		return array[100];
 }
 
