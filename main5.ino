@@ -39,13 +39,16 @@ int threshold = 40;
 
 //edge detector pin
 int frontDetectorPin = 2;
+int backDetectorPin = 3;
+
 
 
 enum State {
   FORWARD,
   BACKWARD,
   TURN,
-  AVOID,
+  FRONTAVOID,
+  BACKAVOID,
   SEARCH,
 };
 
@@ -62,13 +65,18 @@ void loop() {
       moveForward();
 
       if (digitalRead(frontDetectorPin) == LOW) {
-        currentState = AVOID;
+        currentState = FRONTAVOID;
+      } else if (digitalRead(backDetectorPin) == LOW) {
+        currentState = BACKAVOID;
       }
       break;
     
 
     case BACKWARD:              //currently only used when avoiding edge
       moveBackward();
+      if (digitalRead(backDetectorPin) == LOW) {
+        currentState = BACKAVOID;
+      }
       delay(500);
       currentState = TURN;
       break;
@@ -81,9 +89,12 @@ void loop() {
       break;
     
 
-    case AVOID:
+    case FRONTAVOID:
       currentState = BACKWARD;
       break;
+    
+    case BACKAVOID:
+      currentState = FORWARD;
 
 
     case SEARCH:
@@ -145,6 +156,11 @@ float ultrasonicSearch() {
   rightMotor.backward(turnSpeed);
   rightMotor2.backward(turnSpeed);
   delay(10);
+  leftMotor.brake();
+  leftMotor2.brake();
+  rightMotor.brake();
+  rightMotor2.brake();
+  delay(500);
 }
 
 void orient(float array[10]) {
