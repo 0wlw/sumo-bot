@@ -58,13 +58,16 @@ State currentState = SEARCH;
 void setup() {
 
   Serial.begin(9600);
-  delay(5500);
+  delay(5000);
 
   pinMode(trigPin, OUTPUT);
   pinMode(echoPin, INPUT);
 
   pinMode(frontDetectorPin, INPUT);
   pinMode(backDetectorPin, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(frontDetectorPin), avoid_front, LOW);
+  attachInterrupt(digitalPinToInterrupt(backDetectorPin), avoid_back, LOW);
 
   randomSeed(analogRead(A0));
 
@@ -289,4 +292,52 @@ float ultrasonicSearch() {
   delay(100);
 
   return dist;
+}
+
+void avoid_front() {
+  Serial.println("FRONT EDGE DETECTED");
+  delay(500);
+
+  brakeAll();
+  delay(50);
+
+  moveBackward();
+  delay(600);
+
+  brakeAll();
+  delay(150);
+
+  turnLeft();
+  delay(600);
+
+  brakeAll();
+
+  SearchComplete = false;
+  searchStartTime = millis();
+  currentState = SEARCH;
+  return;
+}
+
+void avoid_back() {
+  Serial.println("BACK EDGE DETECTED");
+  delay(500);
+
+  brakeAll();
+  delay(50);
+
+  moveForward();
+  delay(600);
+
+  brakeAll();
+  delay(150);
+
+  turnLeft();
+  delay(600);
+
+  brakeAll();
+
+  SearchComplete = false;
+  searchStartTime = millis();
+  currentState = SEARCH;
+  return;
 }
