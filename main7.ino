@@ -33,7 +33,7 @@ const int echoPin = 27;
 float duration, distance;
 float dist;
 
-int threshold = 80;
+int threshold = 50;
 
 //edge detector pins
 int frontDetectorPin = 2;
@@ -66,15 +66,12 @@ void setup() {
   pinMode(frontDetectorPin, INPUT);
   pinMode(backDetectorPin, INPUT);
 
-  attachInterrupt(digitalPinToInterrupt(frontDetectorPin), avoid_front, LOW);
-  attachInterrupt(digitalPinToInterrupt(backDetectorPin), avoid_back, LOW);
-
   randomSeed(analogRead(A0));
 
   searchStartTime = millis();
 
   moveForward();
-  delay(750);
+  delay(1500);
 }
 
 void loop() {
@@ -141,7 +138,7 @@ void loop() {
     case BACKWARD:
 
       moveBackward();
-      delay(200);
+      delay(400);
 
       SearchComplete = false;
       searchStartTime = millis();
@@ -292,52 +289,4 @@ float ultrasonicSearch() {
   delay(100);
 
   return dist;
-}
-
-void avoid_front() {
-  Serial.println("FRONT EDGE DETECTED");
-  delay(500);
-
-  brakeAll();
-  delay(50);
-
-  moveBackward();
-  delay(600);
-
-  brakeAll();
-  delay(150);
-
-  turnLeft();
-  delay(600);
-
-  brakeAll();
-
-  SearchComplete = false;
-  searchStartTime = millis();
-  currentState = SEARCH;
-  return;
-}
-
-void avoid_back() {
-  Serial.println("BACK EDGE DETECTED");
-  delay(500);
-
-  brakeAll();
-  delay(50);
-
-  moveForward();
-  delay(600);
-
-  brakeAll();
-  delay(150);
-
-  turnLeft();
-  delay(600);
-
-  brakeAll();
-
-  SearchComplete = false;
-  searchStartTime = millis();
-  currentState = SEARCH;
-  return;
 }
