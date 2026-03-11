@@ -53,7 +53,7 @@ enum State {
   SEARCH
 };
 
-State currentState = SEARCH;
+State currentState = FORWARD;
 
 void setup() {
 
@@ -70,8 +70,8 @@ void setup() {
 
   searchStartTime = millis();
 
-  moveForward();
-  delay(1500);
+  //moveForward();
+  //delay(1500);
 }
 
 void loop() {
@@ -133,6 +133,9 @@ void loop() {
     case FORWARD:
 
       moveForward();
+      if (millis() > 6000 && millis() < 70) {
+        currentState = SEARCH;
+      }
       break;
 
     case BACKWARD:
